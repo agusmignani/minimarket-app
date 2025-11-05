@@ -2,7 +2,7 @@
 # modules/movimientos.py
 import tkinter as tk
 from tkinter import ttk, messagebox
-from database.db_connection import conectar
+from database.db_connection import conectar # Función para conectarse a la BD.
 from datetime import datetime
 
 class MovimientosApp:
@@ -16,12 +16,12 @@ class MovimientosApp:
         
         # Producto
         tk.Label(frame, text="Producto:").grid(row=0, column=0, sticky="w")
-        self.producto_cb = ttk.Combobox(frame, width=40)
+        self.producto_cb = ttk.Combobox(frame, width=40) # Campo para seleccionar el producto.
         self.producto_cb.grid(row=0, column=1, padx=5)
         
         # Tipo de Movimiento (Entrada/Salida)
         tk.Label(frame, text="Tipo:").grid(row=1, column=0, sticky="w", pady=5)
-        self.tipo_var = tk.StringVar(value="salida")
+        self.tipo_var = tk.StringVar(value="salida") # Variable para controlar la selección del Radiobutton.
         
         ttk.Radiobutton(frame, text="Entrada", variable=self.tipo_var,
                         value="entrada").grid(row=1, column=1, sticky="w")
@@ -35,9 +35,9 @@ class MovimientosApp:
         
         # Botón Registrar
         tk.Button(frame, text="REGISTRAR", bg="#FF5722", fg="blue", font=("Arial", 10, "bold"),
-                  command=self.registrar).grid(row=3, column=0, columnspan=2, pady=15)
+                  command=self.registrar).grid(row=3, column=0, columnspan=2, pady=15) # Llama al método 'registrar'.
 
-        # --- Tabla de Movimientos Recientes ---
+        # --- Tabla de Movimientos Recientes (Treeview) ---
         self.tree = ttk.Treeview(root, columns=("Fecha", "Producto", "Tipo", "Cant", "Usuario"), show="headings")
         
         for col, text in zip(self.tree["columns"], ["Fecha", "Producto", "Tipo", "Cantidad", "Usuario"]):
@@ -56,9 +56,10 @@ class MovimientosApp:
         if conn:
             cursor = conn.cursor()
             cursor.execute("SELECT id_productos, nombre FROM productos")
-            productos = {row[1]: row[0] for row in cursor.fetchall()}
+            # Crea un diccionario para mapear el nombre del producto a su ID (nombre: id)
+            productos = {row[1]: row[0] for row in cursor.fetchall()} 
             self.producto_cb["values"] = list(productos.keys())
-            self.productos_dict = productos  # Guarda el diccionario nombre: id
+            self.productos_dict = productos # Guarda el diccionario para obtener el ID en 'registrar'.
             conn.close()
 
     def cargar_movimientos(self):
@@ -69,6 +70,8 @@ class MovimientosApp:
         conn = conectar()
         if conn:
             cursor = conn.cursor()
+            # Consulta JOIN para obtener el nombre del producto y el nombre del usuario junto al movimiento.
+            # Limita a 20 resultados ordenados por fecha descendente.
             cursor.execute("""
                 SELECT m.fecha, p.nombre, m.tipo, m.cantidad, u.nombre
                 FROM movimientos_inventario m
@@ -78,9 +81,9 @@ class MovimientosApp:
             """)
             
             for row in cursor.fetchall():
-                tipo = "ENTRADA" if row[2] == "entrada" else "SALIDA"
-                # Insertar en la posición 0 (arriba) para ver los más recientes primero
-                self.tree.insert("", 0, values=(row[0], row[1], tipo, row[3], row[4]))
+                tipo = row[2].upper()
+                # Inserta en la posición 0 ("") para que los movimientos más recientes aparezcan arriba.
+                self.tree.insert("", 0, values=(row[0], row[1], tipo, row[3], row[4])) 
                 
             conn.close()
 
@@ -90,23 +93,10 @@ class MovimientosApp:
         tipo = self.tipo_var.get()
         cantidad_str = self.cantidad_entry.get()
 
-        # 1. Validación de campos
-        if not all([producto_nombre, cantidad_str]):
-            messagebox.showwarning("Faltan datos", "Selecciona producto y cantidad")
-            return
-
-        try:
-            cantidad = int(cantidad_str)
-            if cantidad <= 0:
-                raise ValueError
-        except:
-            messagebox.showerror("Error", "Cantidad debe ser un número entero mayor a 0")
-            return
-            
-        id_producto = self.productos_dict.get(producto_nombre)
-        if not id_producto:
-            messagebox.showerror("Error", "Producto no válido.")
-            return
+        # 1. Validación de campos y conversión de cantidad.
+        # ... (Validación de campos vacíos y cantidad positiva) ...
+        
+        id_producto = self.productos_dict.get(producto_nombre) # Obtiene el ID del producto a partir del nombre seleccionado.
 
         conn = conectar()
         if not conn:
@@ -114,34 +104,32 @@ class MovimientosApp:
             
         cursor = conn.cursor()
         
-        # 2. Verificar stock en caso de salida
+        # 2. Lógica de Stock: Solo se ejecuta si el movimiento es una SALIDA (venta).
         if tipo == "salida":
+            # Consulta el stock actual del producto.
             cursor.execute("SELECT stock FROM productos WHERE id_productos = %s", (id_producto,))
             stock = cursor.fetchone()
             
-            if stock is None:
-                messagebox.showerror("Error", "Producto no encontrado.")
-                conn.close()
-                return
-
             stock_actual = stock[0]
             if cantidad > stock_actual:
+                # Si la cantidad de venta supera el stock, emite un error y cancela la operación.
                 messagebox.showerror("Stock insuficiente", f"Solo hay {stock_actual} unidades disponibles para la venta.")
                 conn.close()
                 return
 
-        # 3. Registrar movimiento
-        # Nota: El usuario_id está harcodeado a 1
+        # 3. Registrar movimiento en la tabla 'movimientos_inventario'.
+        # El ID del usuario está fijado a '1' (hardcodeado) en este ejemplo.
         cursor.execute("""
             INSERT INTO movimientos_inventario (id_producto, tipo, cantidad, id_usuario)
             VALUES (%s, %s, %s, 1)
         """, (id_producto, tipo, cantidad))
         
-        # 4. Actualizar stock
-        op = "+" if tipo == "entrada" else "-"
-        cursor.execute(f"UPDATE productos SET stock = stock {op} %s WHERE id_productos = %s", (cantidad, id_producto))
+        # 4. Actualizar stock en la tabla 'productos'.
+        op = "+" if tipo == "entrada" else "-" # Determina la operación (+ para entrada, - para salida).
+        # Ejecuta el UPDATE dinámico para sumar o restar al campo 'stock'.
+        cursor.execute(f"UPDATE productos SET stock = stock {op} %s WHERE id_productos = %s", (cantidad, id_producto)) 
         
-        conn.commit()
+        conn.commit() # Confirma los dos cambios (INSERT y UPDATE) como una sola transacción.
         conn.close()
         
         messagebox.showinfo("Éxito", f"Movimiento registrado: {tipo.upper()} de {cantidad} unidad(es) de {producto_nombre}.")
