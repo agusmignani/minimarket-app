@@ -11,7 +11,7 @@ def conectar():
         conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="1234",
+            password="",
             database="minimarket_fullstack_b"
         )
         return conn

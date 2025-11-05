@@ -14,7 +14,7 @@ class LoginApp:
         self.root.resizable(False, False)
 
         #Titulo
-        tk.Label(root, text="Iniciar Sesión", font=("Arial", 16, "bold")).pack(oady=15)
+        tk.Label(root, text="Iniciar Sesión", font=("Arial", 16, "bold")).pack(pady=15)
 
         #Email
         tk.Label(root, text="Email:").pack(pady=5)
@@ -44,7 +44,7 @@ class LoginApp:
         
         try: 
             cursor = conn.cursor()
-            cursor.execude("SELECT id_usuario, nombre, apellido, email FROM usuarios WHERE email = %s AND rol = %s", (email, rol))
+            cursor.execute("SELECT id_usuario, nombre, apellido, email, rol FROM usuarios WHERE email = %s AND rol = %s", (email, rol))
             usuario = cursor.fetchone()
             conn.close()
 

@@ -10,7 +10,7 @@ class MenuApp:
         self.usuario = usuario
         self.root.title(f"Minimarket - {usuario[3].title()}")
         self.root.geometry("800x500")
-        tk.Label(root, text=f"Usuario: {usuario[1]} ({usuario[3]})",
+        tk.Label(root, text=f"Usuario: {usuario[1]} ({usuario[4]})",
         		 font=("Arial", 10)).pack(anchor="ne", padx=20, pady=10) 
         tk.Label(root, text="MINIMARKET FULLSTACK B", font=("Arial",
         		 18, "bold")).pack(pady=20)
@@ -28,9 +28,8 @@ class MenuApp:
         tk.Button(root, text="CERRAR SESIÓN", bg="#F44336", fg="white",
         			 **btn_style, command=root.destroy).pack(pady=20)
 
-
     def abrir_productos(self):
-        if self.usuario[3] == "admin":  # usuario[3] = rol
+        if self.usuario[4] == "admin":  # usuario[3] = rol
             self.nueva_ventana("Productos", lambda root: ProductosApp(root, es_admin=True))
         else:
             messagebox.showwarning("Acceso denegado", "Solo el admin puede gestionar productos")
