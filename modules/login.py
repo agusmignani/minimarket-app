@@ -25,7 +25,7 @@ class LoginApp:
         #Rol
         tk.Label(root, text="Rol:").pack(pady=5)
         self.rol_var = tk.StringVar(value="admin") # Variable de control para el Combobox del rol.
-        ttk.Combobox(root, textvariable=self.rol_var, values=["admin", "empleado"], 
+        ttk.Combobox(root, textvariable=self.rol_var, values=["admin", "empleado", "super_usuario"], 
                      state="readonly", width=27).pack(pady=5) # El rol solo puede ser seleccionado de la lista (readonly).
 
         #Boton

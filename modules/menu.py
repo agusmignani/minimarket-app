@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 from modules.productos import ProductosApp  # Importa la clase de gestión de productos.
 from modules.movimientos import MovimientosApp  # Importa la clase para registrar movimientos.
 from modules.reportes import ReportesApp  # Importa la clase para visualizar reportes.
+from modules.usuarios import UsuariosApp  # Importa la clase de gestión de usuarios.
 
 class MenuApp:
     # Recibe 'root' (ventana principal) y 'usuario' (datos del usuario autenticado).
@@ -25,6 +26,9 @@ class MenuApp:
         tk.Button(root, text="GESTIÓN DE PRODUCTOS", bg="#2196F3",
                   fg="white", **btn_style, command=self.abrir_productos).pack(pady=10)
         
+        tk.Button(root, text="GESTIÓN DE USUARIOS", bg="#F5F242",
+                  fg="white", **btn_style, command=self.abrir_usuarios).pack(pady=10)
+        
         tk.Button(root, text="REGISTRAR MOVIMIENTOS", bg="#FF9800", fg="white",
                   **btn_style, command=self.abrir_movimientos).pack(pady=10)
         
@@ -43,6 +47,15 @@ class MenuApp:
         else:
             # Si no es admin, notifica la restricción.
             messagebox.showwarning("Acceso denegado", "Solo el admin puede gestionar productos") 
+
+    def abrir_usuarios(self):
+        # Lógica de Permisos: Verifica si el rol del usuario (índice 4) es "super_usuario".
+        if self.usuario[4] == "super_usuario": 
+            # Si es super_usuario, abre la ventana de gestión de usuarios.
+            self.nueva_ventana("Gestión de Usuarios", lambda root: UsuariosApp(root, super_usuario=True)) 
+        else:
+            # Si no es super_usuario, notifica la restricción.
+            messagebox.showwarning("Acceso denegado", "Solo el super usuario puede gestionar usuarios")
 
     def abrir_movimientos(self):
         # Abre la ventana de Movimientos.
