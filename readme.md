@@ -137,7 +137,7 @@ CREATE TABLE movimientos_inventario (
 
 | Login | Menú Principal | Gestión de Productos |
 | :---: | :---: | :---: |
-| ! (assets/login.png) | ! (assets/menu.png) | ! (assets/productos.png) |
+| ! [Login Screen] (assets/login.png) | ! (assets/menu.png) | ! (assets/productos.png) |
 
 ---
 
