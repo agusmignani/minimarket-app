@@ -2,8 +2,6 @@
 
 **Una aplicación de gestión de inventario para minimarkets, desarrollada en Python con una interfaz gráfica Tkinter y persistencia de datos en MySQL.**
 
-assets/login.png
-
 ---
 
 ## 💻 Descripción del Proyecto
@@ -137,8 +135,7 @@ CREATE TABLE movimientos_inventario (
 
 | Login | Menú Principal | Gestión de Productos |
 | :---: | :---: | :---: |
-| ! [Login Screen] (assets/login.png) | ! (assets/menu.png) | ! (assets/productos.png) |
-
+| ![Login](assets/login.png) | ![Menu Principal](assets/menu.png) | ![Gestión de Productos](assets/productos.png) |
 ---
 
 ## 👥 Autor
