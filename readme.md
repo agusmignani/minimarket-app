@@ -130,12 +130,13 @@ CREATE TABLE movimientos_inventario (
     * **Email (Admin):** `agus@minimarket.com` 
     * **Rol:** `admin`
 
-## 📸 Capturas de Pantalla
+## 🖱️ Interfaz
 
 
 | Login | Menú Principal | Gestión de Productos |
 | :---: | :---: | :---: |
 | ![Login](assets/login.png) | ![Menu Principal](assets/menu.png) | ![Gestión de Productos](assets/productos.png) |
+| ![Gestion de Movimientos](assets/movimientos.png) | ![Reportes](assets/menu.png) | ![Gestión de Usuarios](assets/usuarios.png) |
 ---
 
 ## 👥 Autor
