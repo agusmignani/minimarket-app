@@ -137,7 +137,6 @@ CREATE TABLE movimientos_inventario (
 | :---: | :---: | :---: |
 | ![Login](assets/login.png) | ![Menu Principal](assets/menu.png) | ![Gestión de Productos](assets/productos.png) |
 | Gestion de Movimientos | Reportes | Gestión de Usuarios |
-| :---: | :---: | :---: |
 | ![Gestion de Movimientos](assets/movimientos.png) | ![Reportes](assets/reportes.png) | ![Gestión de Usuarios](assets/usuarios.png) |
 ---
 
